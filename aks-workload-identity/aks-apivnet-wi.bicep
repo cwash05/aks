@@ -348,7 +348,7 @@ resource aks_cluster 'Microsoft.ContainerService/managedClusters@2022-08-03-prev
         vmSize: vmSKU
 
         osDiskSizeGB: 128
-        osDiskType: 'Ephemeral'
+        osDiskType: 'Managed'
         kubeletDiskType: 'OS'
         workloadRuntime: 'OCIContainer'
         vnetSubnetID: '${vnet.id}/subnets/${sysnode_sub_name}'
@@ -476,7 +476,7 @@ resource cluster_name_nodepool1 'Microsoft.ContainerService/managedClusters/agen
     count: 1
     vmSize: vmSKU
     osDiskSizeGB: 128
-    osDiskType: 'Ephemeral'
+    osDiskType: 'Managed'
     kubeletDiskType: 'OS'
     workloadRuntime: 'OCIContainer'
     vnetSubnetID: '${vnet.id}/subnets/${sysnode_sub_name}'
@@ -510,7 +510,7 @@ resource cluster_name_workid 'Microsoft.ContainerService/managedClusters/agentPo
     count: 1
     vmSize: vmSKU
     osDiskSizeGB: 128
-    osDiskType: 'Ephemeral'
+    osDiskType: 'Managed'
     kubeletDiskType: 'OS'
     workloadRuntime: 'OCIContainer'
     vnetSubnetID: '${vnet.id}/subnets/${win_z1_sub_name}'
