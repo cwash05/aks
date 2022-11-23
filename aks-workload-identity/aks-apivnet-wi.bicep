@@ -23,7 +23,7 @@ param vnet_address_prefix string = '10.2.0.0/16'
 param vnet_name string = '${rg_name}-vnet'
 param admin string = 'chwash'
 param kubernetes_version string ='1.24.3'
-param vmSKU string = 'Standard_DS3_v2'
+param vmSKU string = 'Standard_D2s_v3'
 
 
 //param ustring string = uniqueString(subscription().subscriptionId, utcNow())
