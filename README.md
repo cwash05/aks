@@ -31,5 +31,5 @@ git clone https://github.com/cwash05/aks.git
 cd /aks/aks-workload-identity  
 ./aksdeploy.sh  
   
-Provide a prefix for your resource names and the location to deploy to.  
-#### Deploy to a location that supports Zones
+Provide a prefix for your resource names and the location to deploy to.
+###Deploy to a location that supports Zones
