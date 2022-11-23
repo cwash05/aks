@@ -374,5 +374,5 @@ fi
 echo '**********************'
 
 adminpw=$(az deployment group show  -g $aksResourceGroupName -n ${template/.bicep} --query properties.outputs.adminpw.value -otsv)
-echo 'Admin password: ' $adminpw
+echo 'Windows admin password: ' $adminpw
 echo 'Finished'
