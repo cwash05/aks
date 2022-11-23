@@ -20,7 +20,8 @@ A quick-start pod is deployed to the namespace using the service account and pul
 
 ### Run  
 git clone https://github.com/cwash05/aks.git  
-cd /aks/aks-workload-identity  
+cd aks/aks-workload-identity  
+chmod +x aksdeploy.sh  
 ./aksdeploy.sh  
   
 Provide a prefix for your resource names and the location to deploy to.  
