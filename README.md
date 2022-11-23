@@ -1,4 +1,4 @@
-# workloadid
+# aks-workload-identity
 script for creating aks cluster with <br>
 workload identity<br>
 api vnet integration<br>
