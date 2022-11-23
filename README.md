@@ -27,5 +27,5 @@ I1013 22:49:29.872708       1 main.go:30] "successfully got secret" secret="Hell
 ```
 
 #### Deploy to a location that supports Zones
-cd /aks/aks-workload-identity
+cd /aks/aks-workload-identity  
 ./aksdeploy.sh
