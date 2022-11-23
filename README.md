@@ -26,6 +26,10 @@ You can get the logs for the quick-start pod to verify workload identity.
 I1013 22:49:29.872708       1 main.go:30] "successfully got secret" secret="Hello!"
 ```
 
-#### Deploy to a location that supports Zones
+#### Run  
+git clone https://github.com/cwash05/aks.git  
 cd /aks/aks-workload-identity  
-./aksdeploy.sh
+./aksdeploy.sh  
+  
+Provide a prefix for your resource names and the location to deploy to.  
+#### Deploy to a location that supports Zones
