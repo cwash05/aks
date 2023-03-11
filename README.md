@@ -1,4 +1,4 @@
-# aks-workload-identity
+# Base Cluster
 script for creating aks cluster with <br>
 workload identity<br>
 api vnet integration<br>
@@ -8,7 +8,10 @@ azure network policy<br>
 azure defender<br>
 azure keyvault secrets provider<br>
 kubelet identity<br>
-running on Mariner/W2022 node pools<br>
+keda addon<br>
+grafana managed addon<br>
+promethous managed addon<br>
+running on MarinerV2/W2022 node pools<br>
 <br>
 
 A keyvault is setup with a secret 'Secret1'.<br>
@@ -18,15 +21,15 @@ A federated account is seteup ${aksPrefix}-fed.<br>
 A quick-start pod is deployed to the namespace using the service account and pulls the secret from the keyvault<br>
 <br>
 
-### Run  
-git clone https://github.com/cwash05/aks.git  
-cd aks/aks-workload-identity  
-chmod +x aksdeploy.sh  
-./aksdeploy.sh  
-  
-Provide a prefix for your resource names and the location to deploy to.  
-### Deploy to a location that supports Zones  
-  
+#### Deploy to a location that supports Zones
+###### script is set run in a bash shell.
+run
+```cli
+cd baseCluster
+./aksdeploy.sh
+```
+
+
 You can get the logs for the quick-start pod to verify workload identity. 
    
 **kubectl logs quick-start**
@@ -34,3 +37,8 @@ You can get the logs for the quick-start pod to verify workload identity.
 ```script
 I1013 22:49:29.872708       1 main.go:30] "successfully got secret" secret="Hello!"
 ```
+
+
+#### Additonal scripts
+[AGIC Cluster](https://github.com/cwash05/aks/tree/main/agicCluster)
+[KEDA Cluster](https://github.com/cwash05/aks/tree/main/kedaCluster)

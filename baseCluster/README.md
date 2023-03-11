@@ -24,7 +24,10 @@ A quick-start pod is deployed to the namespace using the service account and pul
 #### Deploy to a location that supports Zones
 ###### script is set run in a bash shell.
 run
+```cli
+cd baseCluster
 ./aksdeploy.sh
+```
 
 
 You can get the logs for the quick-start pod to verify workload identity. 
@@ -35,3 +38,7 @@ You can get the logs for the quick-start pod to verify workload identity.
 I1013 22:49:29.872708       1 main.go:30] "successfully got secret" secret="Hello!"
 ```
 
+
+#### Additonal scripts
+[AGIC Cluster](https://github.com/cwash05/aks/tree/main/agicCluster)
+[KEDA Cluster](https://github.com/cwash05/aks/tree/main/kedaCluster)

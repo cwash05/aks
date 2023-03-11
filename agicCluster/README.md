@@ -5,6 +5,9 @@ Built with the base cluster.  This script sets up an AKS cluster with Applicatio
 
 #### Deploy to a location that supports Zones
 run
+```cli
+cd agicCluster
 ./agic-aksdeploy.sh
+```
 
 Test the aspnet application URL in the output infromation. 

@@ -9,6 +9,7 @@ Deployment is based off https://github.com/kedacore/sample-dotnet-worker-service
 #### Deploy to a location that supports Zones
 run
 ```cli
+cd kedaCluster
 ./keda-aksdeploy.sh
 ```
 
