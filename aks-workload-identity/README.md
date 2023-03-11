@@ -1,4 +1,4 @@
-# workloadid
+# Base Cluster
 script for creating aks cluster with <br>
 workload identity<br>
 api vnet integration<br>
@@ -8,7 +8,10 @@ azure network policy<br>
 azure defender<br>
 azure keyvault secrets provider<br>
 kubelet identity<br>
-running on Mariner/W2022 node pools<br>
+keda addon<br>
+grafana managed addon<br>
+promethous managed addon<br>
+running on MarinerV2/W2022 node pools<br>
 <br>
 
 A keyvault is setup with a secret 'Secret1'.<br>
@@ -27,4 +30,5 @@ I1013 22:49:29.872708       1 main.go:30] "successfully got secret" secret="Hell
 ```
 
 #### Deploy to a location that supports Zones
+run
 ./aksdeploy.sh

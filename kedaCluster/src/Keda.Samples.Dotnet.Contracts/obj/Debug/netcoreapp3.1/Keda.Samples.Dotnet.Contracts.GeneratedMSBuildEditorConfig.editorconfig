@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = Keda.Samples.Dotnet.Contracts
+build_property.ProjectDir = c:\Users\chwash\aks\kedaCluster\src\Keda.Samples.Dotnet.Contracts\

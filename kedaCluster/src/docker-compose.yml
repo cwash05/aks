@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  keda.samples.worker.servicebus:
+    image:  kedasamples/sample-dotnet-worker-servicebus-queue
+    build:
+      context: .
+      dockerfile: Keda.Samples.Dotnet.OrderProcessor/Dockerfile
+
+  keda.samples.web:
+    image:  kedasamples/sample-dotnet-web
+    ports:
+    - "8000:80"
+    build:
+      context: .
+      dockerfile: Keda.Samples.DotNet.Web/Dockerfile

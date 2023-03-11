@@ -1,0 +1,10 @@
+C:\Users\chwash\aks-keda\sample-dotnet-worker-servicebus-queue-main\sample-dotnet-worker-servicebus-queue\src\Keda.Samples.Dotnet.Contracts\bin\Debug\netcoreapp3.1\Keda.Samples.Dotnet.Contracts.deps.json
+C:\Users\chwash\aks-keda\sample-dotnet-worker-servicebus-queue-main\sample-dotnet-worker-servicebus-queue\src\Keda.Samples.Dotnet.Contracts\bin\Debug\netcoreapp3.1\Keda.Samples.Dotnet.Contracts.dll
+C:\Users\chwash\aks-keda\sample-dotnet-worker-servicebus-queue-main\sample-dotnet-worker-servicebus-queue\src\Keda.Samples.Dotnet.Contracts\bin\Debug\netcoreapp3.1\Keda.Samples.Dotnet.Contracts.pdb
+C:\Users\chwash\aks-keda\sample-dotnet-worker-servicebus-queue-main\sample-dotnet-worker-servicebus-queue\src\Keda.Samples.Dotnet.Contracts\obj\Debug\netcoreapp3.1\Keda.Samples.Dotnet.Contracts.csproj.AssemblyReference.cache
+C:\Users\chwash\aks-keda\sample-dotnet-worker-servicebus-queue-main\sample-dotnet-worker-servicebus-queue\src\Keda.Samples.Dotnet.Contracts\obj\Debug\netcoreapp3.1\Keda.Samples.Dotnet.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\chwash\aks-keda\sample-dotnet-worker-servicebus-queue-main\sample-dotnet-worker-servicebus-queue\src\Keda.Samples.Dotnet.Contracts\obj\Debug\netcoreapp3.1\Keda.Samples.Dotnet.Contracts.AssemblyInfoInputs.cache
+C:\Users\chwash\aks-keda\sample-dotnet-worker-servicebus-queue-main\sample-dotnet-worker-servicebus-queue\src\Keda.Samples.Dotnet.Contracts\obj\Debug\netcoreapp3.1\Keda.Samples.Dotnet.Contracts.AssemblyInfo.cs
+C:\Users\chwash\aks-keda\sample-dotnet-worker-servicebus-queue-main\sample-dotnet-worker-servicebus-queue\src\Keda.Samples.Dotnet.Contracts\obj\Debug\netcoreapp3.1\Keda.Samples.Dotnet.Contracts.csproj.CoreCompileInputs.cache
+C:\Users\chwash\aks-keda\sample-dotnet-worker-servicebus-queue-main\sample-dotnet-worker-servicebus-queue\src\Keda.Samples.Dotnet.Contracts\obj\Debug\netcoreapp3.1\Keda.Samples.Dotnet.Contracts.dll
+C:\Users\chwash\aks-keda\sample-dotnet-worker-servicebus-queue-main\sample-dotnet-worker-servicebus-queue\src\Keda.Samples.Dotnet.Contracts\obj\Debug\netcoreapp3.1\Keda.Samples.Dotnet.Contracts.pdb
