@@ -40,5 +40,5 @@ I1013 22:49:29.872708       1 main.go:30] "successfully got secret" secret="Hell
 
 
 #### Additonal scripts
-[AGIC Cluster](https://github.com/cwash05/aks/tree/main/agicCluster)  
-[KEDA Cluster](https://github.com/cwash05/aks/tree/main/kedaCluster)  
+[AGIC Cluster](https://github.com/cwash05/aks/tree/main/agicCluster)<br>
+[KEDA Cluster](https://github.com/cwash05/aks/tree/main/kedaCluster)<br>  
