@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "JPr3bOv07MCdPacQpo3+W4WemK8lB2+IAlOxpBngZzK9zlMTdynOLgwSkagEFQxT9MvGCp0mCwgFPOs5vQPR3w==",
+  "dgSpecHash": "Jj7WvfnASEsEnHkRLBR28IQ9pHia0GRMGc8+aAdVkIEGnXif+qwfgBOebPwo0A4yyw/i7o6jpkUayCYnCXW/mg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\chwash\\aks-keda\\sample-dotnet-worker-servicebus-queue-main\\sample-dotnet-worker-servicebus-queue\\src\\Keda.Samples.Dotnet.Contracts\\Keda.Samples.Dotnet.Contracts.csproj",
+  "projectFilePath": "C:\\Users\\chwash\\aks\\kedaCluster\\src\\Keda.Samples.Dotnet.Contracts\\Keda.Samples.Dotnet.Contracts.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\chwash\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
   ],

@@ -1,10 +1,24 @@
 #!/bin/bash
 
 # Template
-template="agic_cluster.bicep"
+template="kedaCluster.bicep"
+# graftemplate="FullAzureMonitorMetricsProfile.bicep"
+#parameters="main.parameters.json"
 
-echo -n 'Enter AKS prefix: '
+echo -n 'Enter the AKS prefix: '
 read aksPrefix
+
+echo -n 'Enter your application name: '
+read appName
+
+echo -n 'Enter the Service Bus namespace: '
+read sbname
+
+echo -n 'Enter the namespace queue name (for the demon the name needs to be: orders): '
+read queueName
+
+
+
 
 ZoneRegions=(
 ''
@@ -89,13 +103,14 @@ done
 echo
 
 aksResourceGroupName="${aksPrefix}-${location}-rg"
-userAssnFedIdName="${aksPrefix}WorkloadId"
-fedCredentialIdName="${aksPrefix}FedId"  
+userAssnFedIdName="${aksPrefix}-WorkloadId"
+fedCredentialIdName="${aksPrefix}-${appName}FedId"  
 serviceAccountName="${aksPrefix}-sa" 
 serviceAccountNamespace="${aksPrefix}-ns" 
+servicebusNamespaceName="${aksPrefix}-${sbname}"
+applicationName="${aksPrefix}-${appName}"
 
 # AKS cluster name
-aksVnet="${aksPrefix}-vnet"
 aksName="${aksPrefix}-aks"
 validateTemplate=1
 useWhatIf=1
@@ -129,6 +144,7 @@ else
   exit
 fi
 
+
 # Install aks-preview Azure extension
 if [[ $installExtensions == 1 ]]; then
   echo "Checking if [aks-preview] extension is already installed..."
@@ -156,6 +172,7 @@ if [[ $installExtensions == 1 ]]; then
 
   # Registering AKS feature extensions
     aksExtensions=(
+    "AKS-PrometheusAddonPreview"
     "KubeletDisk"
     "AKS-KedaPreview"
     "RunCommandPreview"
@@ -231,9 +248,6 @@ if [[ $? != 0 ]]; then
   # Create the resource group
   az group create --name $aksResourceGroupName --location $location 1>/dev/null
 
-  echo 'Creating user assigned mananged identity for workload identity' $userAssnIdName
-  az identity create --name $userAssnIdName --resource-group $aksResourceGroupName --location $location 
-
   if [[ $? == 0 ]]; then
     echo "[$aksResourceGroupName] resource group successfully created in the [$subscriptionName] subscription"
   else
@@ -244,10 +258,10 @@ else
   echo "[$aksResourceGroupName] resource group already exists in the [$subscriptionName] subscription"
 fi
 
-
-userAssnFedIdNameClientId="$(az identity show --resource-group $aksResourceGroupName --name $userAssnIdName --query 'clientId' -otsv)"
-userAssnFedIdNameObjectId="$(az identity show --resource-group $aksResourceGroupName --name $userAssnIdName --query 'principalId' -otsv)"
-
+echo 'Creating user assigned mananged identity for workload identity' $userAssnFedIdName
+az identity create --name $userAssnFedIdName --resource-group $aksResourceGroupName --location $location 
+userAssnFedIdNameClientId="$(az identity show --resource-group $aksResourceGroupName --name $userAssnFedIdName --query 'clientId' -otsv)"
+userAssnFedIdNameObjectId="$(az identity show --resource-group $aksResourceGroupName --name $userAssnFedIdName --query 'principalId' -otsv)"
 
 
 # Create AKS cluster if does not exist
@@ -320,7 +334,9 @@ if [[ $notExists != 0 || $update == 1 ]]; then
         userObjectId=$userObjectId \
         assignments=$assignments \
         azureMonitorLocation=$azureMonitorLocation \
-        grafanaLocation=$grafanaLocation
+        grafanaLocation=$grafanaLocation \
+        servicebusNamespaceName=$servicebusNamespaceName \
+        queueName=$queueName
 
 
       if [[ $? == 0 ]]; then
@@ -342,7 +358,9 @@ if [[ $notExists != 0 || $update == 1 ]]; then
         userObjectId=$userObjectId \
         assignments=$assignments \
         azureMonitorLocation=$azureMonitorLocation \
-        grafanaLocation=$grafanaLocation) 
+        grafanaLocation=$grafanaLocation \
+        servicebusNamespaceName=$servicebusNamespaceName \
+        queueName=$queueName) 
 
       if [[ $? == 0 ]]; then
         echo "[$template] Bicep template validation succeeded"
@@ -367,10 +385,11 @@ if [[ $notExists != 0 || $update == 1 ]]; then
     userObjectId=$userObjectId \
     assignments=$assignments \
     azureMonitorLocation=$azureMonitorLocation \
-    grafanaLocation=$grafanaLocation
+    grafanaLocation=$grafanaLocation \
+    servicebusNamespaceName=$servicebusNamespaceName \
+    queueName=$queueName
 
   if [[ $? == 0 ]]; then
-    sleep 10
     echo "[$template] Bicep template successfully provisioned"
   else
     echo "Failed to provision the [$template] Bicep template"
@@ -379,8 +398,6 @@ if [[ $notExists != 0 || $update == 1 ]]; then
 else
   echo "[$aksName] aks cluster already exists in the [$aksResourceGroupName] resource group"
 fi
-
-az network vnet subnet update  -g $aksResourceGroupName --vnet-name $aksVnet -n appgateway-sub --network-security-group null
 
 
 # Retrieve the resource id of the AKS cluster
@@ -409,8 +426,8 @@ keyVaultUri=$(az deployment group show  -g $aksResourceGroupName -n ${template/.
 
 
 
-
 grafanaDashboardUrl=$(az deployment group show  -g $aksResourceGroupName -n ${template/.bicep}  --query properties.outputs.grafanaDashboardUrl.value -otsv)
+
 
 
 echo 'Logging into clusster'
@@ -428,7 +445,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   annotations:
-    azure.workload.identity/client-id: ${userAssnFedIdNameClientId}
+    azure.workload.identity/client-id: $userAssnFedIdNameClientId
   labels:
     azure.workload.identity/use: "true"
   name: $serviceAccountName
@@ -436,49 +453,124 @@ metadata:
 ---  
 EOF
 
-
-echo 'Creating federated identity ' $fedIdName
-az identity federated-credential create --name $fedCredentialIdName --identity-name $userAssnFedIdName --resource-group $aksResourceGroupName --issuer $AKS_OIDC_ISSUER --subject system:serviceaccount:$serviceAccountNamespace:$serviceAccountName
-
-echo 'Creating pod'
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Pod
-metadata:
-  name: quick-start
-  namespace: $serviceAccountNamespace
-  labels:
-    azure.workload.identity/use: "true"
-spec:
-  serviceAccountName: $serviceAccountName
-  containers:
-    - image: ghcr.io/azure/azure-workload-identity/msal-go:latest
-      name: oidc
-      env:
-      - name: KEYVAULT_URL
-        value: $keyVaultUri
-      - name: SECRET_NAME
-        value: $kvSecretName
-  nodeSelector:
-    kubernetes.io/os: linux
----
-EOF
 else
 echo "Namespace [${serviceAccountNamespace}] already exist."
 fi  
 
+kubectl create ns monitoring
+kubectl apply -f ../metricsMonitor/windows-exporter-ds.yaml
+kubectl apply -f ../metricsMonitor/ama-metrics-settings-cm.yaml
+
+echo 'Creating federated identity ' $fedCredentialIdName
+az identity federated-credential create --name $fedCredentialIdName --identity-name $userAssnFedIdName --resource-group $aksResourceGroupName --issuer $AKS_OIDC_ISSUER --subject system:serviceaccount:$serviceAccountNamespace:$serviceAccountName
+az identity federated-credential create --name "${applicationName}KedaOpFedId" --identity-name $userAssnFedIdName --resource-group $aksResourceGroupName --issuer $AKS_OIDC_ISSUER --subject system:serviceaccount:kube-system:keda-operator
+
 sleep 10
-kubectl apply -f https://raw.githubusercontent.com/Azure/application-gateway-kubernetes-ingress/master/docs/examples/aspnetapp.yaml
+echo 'Creating pod'
+# cat <<EOF | kubectl apply -f -
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: quick-start
+#   namespace: $serviceAccountNamespace
+#   labels:
+#     azure.workload.identity/use: "true"
+# spec:
+#   serviceAccountName: $serviceAccountName
+#   containers:
+#     - image: ghcr.io/azure/azure-workload-identity/msal-go
+#       name: oidc
+#       env:
+#       - name: KEYVAULT_URL
+#         value: $keyVaultUri
+#       - name: SECRET_NAME
+#         value: $kvSecretName
+#   nodeSelector:
+#     kubernetes.io/os: linux
+# ---
+# EOF
+
+cat <<EOF | kubectl apply -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-processor
+  namespace: $serviceAccountNamespace
+  labels:
+    app: order-processor
+spec:
+  selector:
+    matchLabels:
+      app: order-processor
+  template:
+    metadata:
+      labels:
+        app: order-processor
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: $serviceAccountName
+      containers:
+        - name: order-processor
+          image: ghcr.io/kedacore/sample-dotnet-worker-servicebus-queue:latest
+          env:
+          - name: KEDA_SERVICEBUS_AUTH_MODE
+            value: WorkloadIdentity
+          - name: KEDA_SERVICEBUS_HOST_NAME
+            value: $servicebusNamespaceName.servicebus.windows.net
+          - name: KEDA_SERVICEBUS_QUEUE_NAME
+            value: $queueName
+          resources:
+            requests:
+              cpu: 250m
+              memory: 500Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi    
+      nodeSelector:
+        kubernetes.io/os: linux
+---
+EOF
+
+echo 'Creating KEDA objects'
+cat <<EOF | kubectl apply -f -
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: trigger-auth-service-bus-orders
+  namespace: $serviceAccountNamespace
+spec:
+  podIdentity:
+    provider: azure-workload
+    identityId: $userAssnFedIdNameClientId
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: order-scaler
+  namespace: $serviceAccountNamespace
+spec:
+  scaleTargetRef:
+    name: order-processor
+  # minReplicaCount: 0 Change to define how many minimum replicas you want
+  maxReplicaCount: 10
+  triggers:
+  - type: azure-servicebus
+    metadata:
+      namespace: $servicebusNamespaceName
+      queueName: $queueName
+      messageCount: '5'
+    authenticationRef:
+      name: trigger-auth-service-bus-orders
+---
+EOF
 
 echo '**********************'
 
-sleep 10
+sbConnectionString=$(az servicebus namespace authorization-rule keys list -g $aksResourceGroupName --namespace-name $servicebusNamespaceName --name RootManageSharedAccessKey --query "primaryConnectionString" -o tsv)
 
-ingressIp=$(kubectl get ingress aspnetapp --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
-
-sleep 10
-
-echo 'Grafana dashboard URL:' $grafanaDashboardUrl
-echo 'Aspnet application URL: http://'$ingressIp
-kubectl logs quick-start -n $aksPrefix-ns
+echo 'Service bus connection string: ' $sbConnectionString
+echo
+echo 'Grafana dashboard Url:' $grafanaDashboardUrl
+echo
 echo 'Finished'
+echo '*************************'

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Template
-template="base_cluster.bicep"
-graftemplate="FullAzureMonitorMetricsProfile.bicep"
+template="baseCluster.bicep"
+# graftemplate="FullAzureMonitorMetricsProfile.bicep"
 #parameters="main.parameters.json"
 
 echo -n 'Enter AKS prefix: '
@@ -158,6 +158,7 @@ if [[ $installExtensions == 1 ]]; then
   # Registering AKS feature extensions
     aksExtensions=(
     "KubeletDisk"
+    "AKS-PrometheusAddonPreview"
     "AKS-KedaPreview"
     "RunCommandPreview"
     "UserAssignedIdentityPreview"
@@ -466,15 +467,20 @@ echo "Namespace [${serviceAccountNamespace}] already exist."
 fi  
 
 
+
 echo '**********************'
 
-adminpw=$(az deployment group show  -g $aksResourceGroupName -n ${template/.bicep} --query properties.outputs.adminpw.value -otsv)
+kubectl create ns monitoring
+kubectl apply -f ../metricsMonitor/windows-exporter-ds.yaml
+kubectl apply -f ../metricsMonitor/ama-metrics-settings-cm.yaml
+
+# adminpw=$(az deployment group show  -g $aksResourceGroupName -n ${template/.bicep} --query properties.outputs.adminpw.value -otsv)
 
 
 sleep 15
 
-echo "Running logs quick-start -n $aksPrefix-ns"
-kubectl logs quick-start -n $aksPrefix-ns
+echo "Running logs quick-start -n $serviceAccountNamespace"
+kubectl logs quick-start -n $serviceAccountNamespace
 echo
 echo 'Grafana dashboard Url:' $grafanaDashboardUrl
 echo

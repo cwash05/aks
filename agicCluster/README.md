@@ -7,7 +7,7 @@ Built with the base cluster.  This script sets up an AKS cluster with Applicatio
 run
 ```cli
 cd agicCluster
-./agic-aksdeploy.sh
+./agicAksdeploy.sh
 ```
 
 Test the aspnet application URL in the output infromation. 

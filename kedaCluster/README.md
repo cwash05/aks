@@ -10,7 +10,7 @@ Deployment is based off https://github.com/kedacore/sample-dotnet-worker-service
 run
 ```cli
 cd kedaCluster
-./keda-aksdeploy.sh
+./kedaAksdeploy.sh
 ```
 
 

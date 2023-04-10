@@ -3229,11 +3229,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\chwash\\aks-keda\\sample-dotnet-worker-servicebus-queue-main\\sample-dotnet-worker-servicebus-queue\\src\\Keda.Samples.Dotnet.OrderGenerator\\Keda.Samples.Dotnet.OrderGenerator.csproj",
+      "projectUniqueName": "C:\\Users\\chwash\\aks\\kedaCluster\\src\\Keda.Samples.Dotnet.OrderGenerator\\Keda.Samples.Dotnet.OrderGenerator.csproj",
       "projectName": "Keda.Samples.Dotnet.OrderGenerator",
-      "projectPath": "C:\\Users\\chwash\\aks-keda\\sample-dotnet-worker-servicebus-queue-main\\sample-dotnet-worker-servicebus-queue\\src\\Keda.Samples.Dotnet.OrderGenerator\\Keda.Samples.Dotnet.OrderGenerator.csproj",
+      "projectPath": "C:\\Users\\chwash\\aks\\kedaCluster\\src\\Keda.Samples.Dotnet.OrderGenerator\\Keda.Samples.Dotnet.OrderGenerator.csproj",
       "packagesPath": "C:\\Users\\chwash\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\chwash\\aks-keda\\sample-dotnet-worker-servicebus-queue-main\\sample-dotnet-worker-servicebus-queue\\src\\Keda.Samples.Dotnet.OrderGenerator\\obj\\",
+      "outputPath": "C:\\Users\\chwash\\aks\\kedaCluster\\src\\Keda.Samples.Dotnet.OrderGenerator\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -3256,8 +3256,8 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "C:\\Users\\chwash\\aks-keda\\sample-dotnet-worker-servicebus-queue-main\\sample-dotnet-worker-servicebus-queue\\src\\Keda.Samples.Dotnet.Contracts\\Keda.Samples.Dotnet.Contracts.csproj": {
-              "projectPath": "C:\\Users\\chwash\\aks-keda\\sample-dotnet-worker-servicebus-queue-main\\sample-dotnet-worker-servicebus-queue\\src\\Keda.Samples.Dotnet.Contracts\\Keda.Samples.Dotnet.Contracts.csproj"
+            "C:\\Users\\chwash\\aks\\kedaCluster\\src\\Keda.Samples.Dotnet.Contracts\\Keda.Samples.Dotnet.Contracts.csproj": {
+              "projectPath": "C:\\Users\\chwash\\aks\\kedaCluster\\src\\Keda.Samples.Dotnet.Contracts\\Keda.Samples.Dotnet.Contracts.csproj"
             }
           }
         }
@@ -3301,7 +3301,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   }

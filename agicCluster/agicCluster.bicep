@@ -31,7 +31,7 @@
 param location string = resourceGroup().location
 param rg_name string = resourceGroup().name
 param tenantId string = subscription().tenantId
-param cluster_name string = '${rg_name}-aks'
+param cluster_name string = '${aksPrefix}-aks'
 
 param aksPrefix string = 'edge01'
 
@@ -41,14 +41,18 @@ param linux_z1_pod_sub_name string = 'linuxz1-pod-sub'
 param win_z1_sub_name string = 'winz1-sub'
 param win_z1_pod_sub_name string = 'winz1-pod-sub'
 param sysnode_sub_name string = 'sysnode-sub'
+param sysnode_pod_sub_name string = 'sysnode-pod-sub'
+param app_gateway_sub_name string = 'appgateway-sub'
 
 param api_address_prefix string = '10.2.1.0/28'
 param linux_z1_address_prefix string = '10.2.6.0/23'
 param linux_z1_pod_address_prefix string = '10.2.8.0/21'
 param win_z1_address_prefix string = '10.2.18.0/23'
 param win_z1_pod_address_prefix string = '10.2.24.0/21'
-param sysnode_address_prefix string = '10.2.3.0/24'
+param sysnode_address_prefix string = '10.2.0.0/24'
+param sysnode_pod_address_prefix string = '10.2.3.0/24'
 param vnet_address_prefix string = '10.2.0.0/16'
+param app_gateway_prefix string = '10.2.5.0/24'
 
 param networkPolicy string = 'azure'
 param networkPlugin string = 'azure'
@@ -58,9 +62,13 @@ param kubernetes_version string ='1.24.3'
 param vmSKU string = 'Standard_D2s_v3'
 param default_node_pool_name string = 'system'
 param win_node_pool_name string = 'win123'
+param lxn_node_pool_name string = 'linuxz1'
 param maxPods int = 30
 param osDiskSizeGB int = 128
-param sysNodeCount int = 3
+param sysNodeCount int = 1
+param linuxNodeCount int = 2
+param winNodeCount int = 1
+
 
 @allowed([
   'centralus'
@@ -100,7 +108,7 @@ param guidValue string = newGuid()
 
 param kubeletID_name string = 'kubeletID'
 param ccpID_name string = 'ccpID'
-param log_analytics_name string = '${rg_name}-la'
+param log_analytics_name string = '${aksPrefix}-la'
 param baseTime string = utcNow()
 
 param assignments bool = true
@@ -363,6 +371,119 @@ module sysNodeSubNsg 'vnetnsg.bicep' = {
     rglocation: location
   }
 }
+module sysPodSubNsg 'vnetnsg.bicep' = {
+  name: '${vnet_name}-${sysnode_pod_sub_name}-nsg'
+  params:{
+    nsgName: '${vnet_name}-${sysnode_pod_sub_name}-nsg'
+    rglocation: location
+  }
+}
+resource appGatewaySubNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: '${vnet_name}-${app_gateway_sub_name}-nsg'
+  location: location
+  properties: {
+    securityRules: [
+      {
+        name: 'AllowCorpnet'
+        type: 'Microsoft.Network/networkSecurityGroups/securityRules'
+        properties: {
+          description: 'CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '*'
+          sourceAddressPrefix: 'CorpNetPublic'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 2700
+          direction: 'Inbound'
+          sourcePortRanges: []
+          destinationPortRanges: []
+          sourceAddressPrefixes: []
+          destinationAddressPrefixes: []
+        }
+      }
+      {
+        name: 'AllowSAW'
+        type: 'Microsoft.Network/networkSecurityGroups/securityRules'
+        properties: {
+          description: 'CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '*'
+          sourceAddressPrefix: 'CorpNetSaw'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 2703
+          direction: 'Inbound'
+          sourcePortRanges: []
+          destinationPortRanges: []
+          sourceAddressPrefixes: []
+          destinationAddressPrefixes: []
+        }
+      }
+      {
+        name: 'AllowGatewayManager'
+        type: 'Microsoft.Network/networkSecurityGroups/securityRules'
+        properties: {
+          description: ''
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '65200-65535'
+          sourceAddressPrefix: 'GatewayManager'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 2706
+          direction: 'Inbound'
+          sourcePortRanges: []
+          destinationPortRanges: []
+          sourceAddressPrefixes: []
+          destinationAddressPrefixes: []
+        }
+      }
+      {
+        name: 'AllowTagHTTPInbound'
+        type: 'Microsoft.Network/networkSecurityGroups/securityRules'
+        properties: {
+          description: ''
+          protocol: 'TCP'
+          sourcePortRange: '*'
+          destinationPortRange: '80'
+          sourceAddressPrefix: 'Internet'
+          destinationAddressPrefix: 'VirtualNetwork'
+          access: 'Allow'
+          priority: 1800
+          direction: 'Inbound'
+          sourcePortRanges: []
+          destinationPortRanges: []
+          sourceAddressPrefixes: []
+          destinationAddressPrefixes: []
+        }
+      }
+      {
+        name: 'AllowTagHTTPSInbound'
+        type: 'Microsoft.Network/networkSecurityGroups/securityRules'
+        properties: {
+          description: ''
+          protocol: 'TCP'
+          sourcePortRange: '*'
+          destinationPortRange: '443'
+          sourceAddressPrefix: 'Internet'
+          destinationAddressPrefix: 'VirtualNetwork'
+          access: 'Allow'
+          priority: 1809
+          direction: 'Inbound'
+          sourcePortRanges: []
+          destinationPortRanges: []
+          sourceAddressPrefixes: []
+          destinationAddressPrefixes: []
+        }
+      }
+    ]
+  }
+}
+
+
+
 resource vnet 'Microsoft.Network/virtualNetworks@2022-07-01' = {
   name: vnet_name
   dependsOn:[ laworkspace ]
@@ -382,6 +503,18 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-07-01' = {
         properties: {
           addressPrefix: sysnode_address_prefix
           networkSecurityGroup: { id: sysNodeSubNsg.outputs.nsgID }
+          serviceEndpoints: []
+          delegations: []
+          privateEndpointNetworkPolicies: 'Disabled'
+          privateLinkServiceNetworkPolicies: 'Enabled'
+        }
+        type: 'Microsoft.Network/virtualNetworks/subnets'
+      }
+      {
+        name: sysnode_pod_sub_name
+        properties: {
+          addressPrefix: sysnode_pod_address_prefix
+          networkSecurityGroup: { id: sysPodSubNsg.outputs.nsgID }
           serviceEndpoints: []
           delegations: []
           privateEndpointNetworkPolicies: 'Disabled'
@@ -430,6 +563,18 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-07-01' = {
         properties: {
           addressPrefix: linux_z1_pod_address_prefix
           networkSecurityGroup: { id: linuxPodSubNsg.outputs.nsgID}
+          serviceEndpoints: []
+          delegations: []
+          privateEndpointNetworkPolicies: 'Disabled'
+          privateLinkServiceNetworkPolicies: 'Enabled'
+        }
+        type: 'Microsoft.Network/virtualNetworks/subnets'
+      }
+      {
+        name: app_gateway_sub_name
+        properties: {
+          addressPrefix: app_gateway_prefix
+          networkSecurityGroup: { id: appGatewaySubNsg.id}
           serviceEndpoints: []
           delegations: []
           privateEndpointNetworkPolicies: 'Disabled'
@@ -491,6 +636,7 @@ resource aks_cluster 'Microsoft.ContainerService/managedClusters@2022-11-02-prev
         kubeletDiskType: 'OS'
         workloadRuntime: 'OCIContainer'
         vnetSubnetID: '${vnet.id}/subnets/${sysnode_sub_name}'
+        podSubnetID: '${vnet.id}/subnets/${sysnode_pod_sub_name}'
         maxPods: maxPods
         type: 'VirtualMachineScaleSets'
         availabilityZones: [
@@ -508,6 +654,9 @@ resource aks_cluster 'Microsoft.ContainerService/managedClusters@2022-11-02-prev
         mode: 'System'
         enableEncryptionAtHost: false
         enableUltraSSD: false
+        nodeTaints: [
+          'CriticalAddonsOnly=true:NoSchedule'
+        ]
         osType: 'Linux'
         osSKU: 'Mariner'
         upgradeSettings: {
@@ -536,6 +685,15 @@ resource aks_cluster 'Microsoft.ContainerService/managedClusters@2022-11-02-prev
       }
       azurepolicy: {
         enabled:true
+      }
+      ingressApplicationGateway:{
+        enabled: true
+        config:{
+          applicationGatewayName: '${aksPrefix}-app-gateway'
+          subnetId: '${vnet.id}/subnets/${app_gateway_sub_name}'
+          sku: 'WAF_v2'
+          enableHttp2: 'true'
+        }
       }
     }
     enableRBAC: true
@@ -613,21 +771,64 @@ resource aks_cluster 'Microsoft.ContainerService/managedClusters@2022-11-02-prev
   }
 }
 
+resource lxn_node_pool 'Microsoft.ContainerService/managedClusters/agentPools@2022-11-02-preview' = {
+  parent: aks_cluster
+  name: lxn_node_pool_name
+  properties:{
+    count: linuxNodeCount
+    vmSize: vmSKU
+    osDiskSizeGB: osDiskSizeGB
+    osDiskType: osDiskType
+    kubeletDiskType: 'OS'
+    workloadRuntime: 'OCIContainer'
+    vnetSubnetID: '${vnet.id}/subnets/${linux_z1_sub_name}'
+    podSubnetID: '${vnet.id}/subnets/${linux_z1_pod_sub_name}'
+    maxPods: maxPods
+    type: 'VirtualMachineScaleSets'
+    availabilityZones: [
+      '1'
+      '2'
+      '3'
+    ]
+    enableAutoScaling: false
+    powerState: {
+      code: 'Running'
+    }
+    orchestratorVersion: kubernetes_version
+    enableNodePublicIP: false
+    enableCustomCATrust: false
+    mode: 'System'
+    enableEncryptionAtHost: false
+    enableUltraSSD: false
+    osType: 'Linux'
+    osSKU: 'Mariner'
+    upgradeSettings: {
+    }
+    enableFIPS: false
+  }
+}
+
 resource win_node_pool 'Microsoft.ContainerService/managedClusters/agentPools@2022-11-02-preview' = {
   parent: aks_cluster
+  dependsOn:[
+    lxn_node_pool
+  ]
   name: win_node_pool_name
   properties: {
-    count: 1
+    count: winNodeCount
     vmSize: vmSKU
     osDiskSizeGB: 128
     osDiskType: 'Managed'
     kubeletDiskType: 'OS'
     workloadRuntime: 'OCIContainer'
     vnetSubnetID: '${vnet.id}/subnets/${win_z1_sub_name}'
+    podSubnetID: '${vnet.id}/subnets/${win_z1_pod_sub_name}'
     maxPods: 30
     type: 'VirtualMachineScaleSets'
     availabilityZones: [
       '1'
+      '2'
+      '3'
     ]
     enableAutoScaling: false
     scaleDownMode: 'Delete'
@@ -649,7 +850,7 @@ resource win_node_pool 'Microsoft.ContainerService/managedClusters/agentPools@20
 }
 
 
-module managedProGraf './FullAzureMonitorMetricsProfile.bicep' = {
+module managedProGraf '../metricsMonitor/FullAzureMonitorMetricsProfile.bicep' = {
   name: 'monitor-${cluster_name}'
   params:{
     azureMonitorWorkspaceLocation: azureMonitorLocation

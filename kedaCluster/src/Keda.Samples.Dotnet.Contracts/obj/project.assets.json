@@ -63,11 +63,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\chwash\\aks-keda\\sample-dotnet-worker-servicebus-queue-main\\sample-dotnet-worker-servicebus-queue\\src\\Keda.Samples.Dotnet.Contracts\\Keda.Samples.Dotnet.Contracts.csproj",
+      "projectUniqueName": "C:\\Users\\chwash\\aks\\kedaCluster\\src\\Keda.Samples.Dotnet.Contracts\\Keda.Samples.Dotnet.Contracts.csproj",
       "projectName": "Keda.Samples.Dotnet.Contracts",
-      "projectPath": "C:\\Users\\chwash\\aks-keda\\sample-dotnet-worker-servicebus-queue-main\\sample-dotnet-worker-servicebus-queue\\src\\Keda.Samples.Dotnet.Contracts\\Keda.Samples.Dotnet.Contracts.csproj",
+      "projectPath": "C:\\Users\\chwash\\aks\\kedaCluster\\src\\Keda.Samples.Dotnet.Contracts\\Keda.Samples.Dotnet.Contracts.csproj",
       "packagesPath": "C:\\Users\\chwash\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\chwash\\aks-keda\\sample-dotnet-worker-servicebus-queue-main\\sample-dotnet-worker-servicebus-queue\\src\\Keda.Samples.Dotnet.Contracts\\obj\\",
+      "outputPath": "C:\\Users\\chwash\\aks\\kedaCluster\\src\\Keda.Samples.Dotnet.Contracts\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -123,7 +123,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   }

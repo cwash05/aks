@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "7hufNvG23e8xKzh3eKRXKoWPv+jl9+zFq5EraFIg0caUS7TH7WMXZU2ePiKsouv+/MsS+CgzPmhMmmobuGGTgA==",
+  "dgSpecHash": "PLJAH11mQhlHMs2n3jcvmOwpkGU2TuU2JCcPVJ27h/f0lJQC3tMbgwUYqQwXLqAbXWWKlxTD/pLYz1tOxlijzQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\chwash\\aks-keda\\sample-dotnet-worker-servicebus-queue-main\\sample-dotnet-worker-servicebus-queue\\src\\Keda.Samples.Dotnet.OrderGenerator\\Keda.Samples.Dotnet.OrderGenerator.csproj",
+  "projectFilePath": "C:\\Users\\chwash\\aks\\kedaCluster\\src\\Keda.Samples.Dotnet.OrderGenerator\\Keda.Samples.Dotnet.OrderGenerator.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\chwash\\.nuget\\packages\\azure.core\\1.5.1\\azure.core.1.5.1.nupkg.sha512",
     "C:\\Users\\chwash\\.nuget\\packages\\azure.core.experimental\\0.1.0-preview.6\\azure.core.experimental.0.1.0-preview.6.nupkg.sha512",
