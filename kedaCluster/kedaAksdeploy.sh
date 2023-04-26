@@ -106,8 +106,8 @@ aksResourceGroupName="${aksPrefix}-${location}-rg"
 userAssnFedIdName="${aksPrefix}-WorkloadId"
 fedCredentialIdName="${aksPrefix}-${appName}FedId"  
 serviceAccountName="${aksPrefix}-sa" 
-serviceAccountNamespace="${aksPrefix}-ns" 
-servicebusNamespaceName="${aksPrefix}-${sbname}"
+serviceAccountNamespace="${aksPrefix,,}-ns" 
+servicebusNamespaceName="${aksPrefix,,}-${sbname}"
 applicationName="${aksPrefix}-${appName}"
 
 # AKS cluster name

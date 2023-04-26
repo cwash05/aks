@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Jj7WvfnASEsEnHkRLBR28IQ9pHia0GRMGc8+aAdVkIEGnXif+qwfgBOebPwo0A4yyw/i7o6jpkUayCYnCXW/mg==",
+  "dgSpecHash": "spNDZEaysN5FfzYyQoUU+vWZBD49NjRDuJ58l5dB7hQEXSqrHTsPvQSQS6VQlSp0rD0L/ymWmakya+YYxqnutg==",
   "success": true,
   "projectFilePath": "C:\\Users\\chwash\\aks\\kedaCluster\\src\\Keda.Samples.Dotnet.Contracts\\Keda.Samples.Dotnet.Contracts.csproj",
   "expectedPackageFiles": [

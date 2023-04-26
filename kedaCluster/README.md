@@ -27,6 +27,10 @@ Configure the connection string with the outputted infromation in the tool via y
 ```cli
 ❯ code ./src/Keda.Samples.Dotnet.OrderGenerator/Program.cs
 ```
+Line to edit
+```
+ private const string ConnectionString = "End point string goes here";
+```
 Next, you can run the order generator via the CLI:
 ```cli
 ❯ dotnet run --project ./src/Keda.Samples.Dotnet.OrderGenerator/Keda.Samples.Dotnet.OrderGenerator.csproj
@@ -44,3 +48,5 @@ Now that the messages are generated, you'll see that KEDA starts automatically s
 NAME              DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE       CONTAINERS        IMAGES                                                   SELECTOR
 order-processor   8         8         8            4           4m        order-processor   kedasamples/sample-dotnet-worker-servicebus-queue   app=order-processor
 ```
+#####NOTE
+Autoscaler is not turned on.  All pods may not get sheduled. 

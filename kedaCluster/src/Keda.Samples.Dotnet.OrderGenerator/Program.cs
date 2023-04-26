@@ -10,7 +10,7 @@ namespace Keda.Samples.Dotnet.OrderGenerator
     class Program
     {
         private const string QueueName = "orders";
-        private const string ConnectionString = "Endpoint=sb://keda201-orderprocess.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=g06WX+j+FRUYERFlXVWaQi8KzGBX1g29K+ASbGaDWhk=";
+        private const string ConnectionString = "Endpoint=sb://keda300-orderprocess.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=oD7GOAeA1zIovmjiqQndJGn+y2DxGBdqM+ASbDpmazQ=";
 
         static async Task Main(string[] args)
         {

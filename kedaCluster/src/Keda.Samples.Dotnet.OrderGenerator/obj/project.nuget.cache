@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "PLJAH11mQhlHMs2n3jcvmOwpkGU2TuU2JCcPVJ27h/f0lJQC3tMbgwUYqQwXLqAbXWWKlxTD/pLYz1tOxlijzQ==",
+  "dgSpecHash": "XqE5l3f+OMzm01bpoxGparRvrIJl4o5Mu7lrTt7I9x7jD7FGI7GznaYhbyAoddZrPWFzrr8thAs7CD/t6cjeng==",
   "success": true,
   "projectFilePath": "C:\\Users\\chwash\\aks\\kedaCluster\\src\\Keda.Samples.Dotnet.OrderGenerator\\Keda.Samples.Dotnet.OrderGenerator.csproj",
   "expectedPackageFiles": [

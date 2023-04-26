@@ -93,8 +93,8 @@ echo
 aksResourceGroupName="${aksPrefix}-${location}-rg"
 userAssnFedIdName="${aksPrefix}WorkloadId"
 fedCredentialIdName="${aksPrefix}FedId"  
-serviceAccountName="${aksPrefix}-sa" 
-serviceAccountNamespace="${aksPrefix}-ns" 
+serviceAccountName="${aksPrefix,,}-sa" 
+serviceAccountNamespace="${aksPrefix,,}-ns" 
 
 # AKS cluster name
 aksName="${aksPrefix}-aks"

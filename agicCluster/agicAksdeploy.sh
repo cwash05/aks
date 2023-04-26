@@ -91,8 +91,8 @@ echo
 aksResourceGroupName="${aksPrefix}-${location}-rg"
 userAssnFedIdName="${aksPrefix}WorkloadId"
 fedCredentialIdName="${aksPrefix}FedId"  
-serviceAccountName="${aksPrefix}-sa" 
-serviceAccountNamespace="${aksPrefix}-ns" 
+serviceAccountName="${aksPrefix,,}-sa" 
+serviceAccountNamespace="${aksPrefix,,}-ns" 
 
 # AKS cluster name
 aksVnet="${aksPrefix}-vnet"
@@ -381,8 +381,7 @@ else
   echo "[$aksName] aks cluster already exists in the [$aksResourceGroupName] resource group"
 fi
 
-az network vnet subnet update  -g $aksResourceGroupName --vnet-name $aksVnet -n appgateway-sub --network-security-group null
-
+#az network vnet subnet update  -g $aksResourceGroupName --vnet-name $aksVnet -n appgateway-sub --network-security-group null
 
 # Retrieve the resource id of the AKS cluster
 echo "Retrieving the resource id of the [$aksName] AKS cluster..."
@@ -476,10 +475,11 @@ kubectl apply -f ../metricsMonitor/ama-metrics-settings-cm.yaml
 kubectl apply -f https://raw.githubusercontent.com/Azure/application-gateway-kubernetes-ingress/master/docs/examples/aspnetapp.yaml
 
 echo '**********************'
-
 sleep 10
 
 ingressIp=$(kubectl get ingress aspnetapp --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
+az network nsg rule create --resource-group $aksResourceGroupName --nsg-name "$aksPrefix-vnet-appgateway-sub-nsg" --name Allow-HTTP-All --access Allow --protocol Tcp --direction Inbound --priority 100 --source-address-prefix Internet --source-port-range "*" --destination-address-prefix $ingressIp --destination-port-range 80
+
 
 sleep 10
 
