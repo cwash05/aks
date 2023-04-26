@@ -17,6 +17,7 @@ running on MarinerV2/W2022 node pools<br>
 A public cluster is created with API VNet integration. <br>
 The cluster has 3 nodes pools.  A dedicated system node pool<br>
 A linux node pool and a Windows node pool.  Each in their own subnet<br>
+Each node pool has a seperate pod subnet<br>
 Autoscaling is not enabled<br>
 A keyvault is setup with a secret 'Secret1'.<br>
 A workload(managaed) identity is setup ${aksPrefix}WorkloadId.<br>
