@@ -31,7 +31,7 @@
 param location string = resourceGroup().location
 param rg_name string = resourceGroup().name
 param tenantId string = subscription().tenantId
-param cluster_name string = '${rg_name}-aks'
+param cluster_name string = '${aksPrefix}-aks'
 
 param aksPrefix string = 'edge01'
 
@@ -66,6 +66,7 @@ param osDiskSizeGB int = 128
 param sysNodeCount int = 1
 param linuxNodeCount int = 2
 param winNodeCount int = 1
+
 
 @allowed([
   'centralus'
@@ -105,7 +106,7 @@ param guidValue string = newGuid()
 
 param kubeletID_name string = 'kubeletID'
 param ccpID_name string = 'ccpID'
-param log_analytics_name string = '${rg_name}-la'
+param log_analytics_name string = '${aksPrefix}-la'
 param baseTime string = utcNow()
 
 param assignments bool = true
@@ -129,10 +130,6 @@ param enableSoftDelete bool = true
 @description('Specifies the object ID of the managed identity to configure in Key Vault access policies.')
 param userAssnFedIdNameObjectId string
 param userObjectId string
-
-param servicebusNamespaceName string 
-param queueName string
-
 
 var guidGen = dateTimeAdd(baseTime, '-P9D')
 var akvRawName = 'kv-${replace(aksPrefix, '-', '')}-${uniqueString(resourceGroup().id, aksPrefix)}'
@@ -177,16 +174,6 @@ resource grafanaManagedDashboard 'Microsoft.Dashboard/grafana@2022-08-01' = {
 }
 
 
-module servicebusNamespace './sb.bicep' = {
-  name: '${aksPrefix}-sb'
-  params:{
-    location: location
-    servicebusNamespaceName: servicebusNamespaceName
-    queueName:queueName
-    userAssnFedIdNameObjectId: userAssnFedIdNameObjectId
-    guidGen: guidGen
-  }
-}
 
 resource grafanaDataReaderRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(guidGen, rg_name, baseTime)
@@ -499,6 +486,14 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-07-01' = {
   }
 }
 
+resource appDnsZone 'Microsoft.Network/dnsZones@2018-05-01' = {
+  name: '${aksPrefix}.com'
+  location: 'global'
+  properties: {
+    zoneType: 'Public'
+  }
+}
+
 resource aks_cluster 'Microsoft.ContainerService/managedClusters@2022-11-02-preview' = {
   name: cluster_name
   dependsOn:[
@@ -616,6 +611,12 @@ resource aks_cluster 'Microsoft.ContainerService/managedClusters@2022-11-02-prev
         
       }
     }
+    ingressProfile: {
+      webAppRouting: {
+        dnsZoneResourceId: appDnsZone.id
+        enabled: true
+      }
+    }
     disableLocalAccounts: false
     securityProfile: {
       defender: {
@@ -655,6 +656,7 @@ resource aks_cluster 'Microsoft.ContainerService/managedClusters@2022-11-02-prev
   }
 }
 
+
 resource lxn_node_pool 'Microsoft.ContainerService/managedClusters/agentPools@2022-11-02-preview' = {
   parent: aks_cluster
   name: lxn_node_pool_name
@@ -692,13 +694,12 @@ resource lxn_node_pool 'Microsoft.ContainerService/managedClusters/agentPools@20
   }
 }
 
-
 resource win_node_pool 'Microsoft.ContainerService/managedClusters/agentPools@2022-11-02-preview' = {
   parent: aks_cluster
-  name: win_node_pool_name
   dependsOn:[
     lxn_node_pool
   ]
+  name: win_node_pool_name
   properties: {
     count: winNodeCount
     vmSize: vmSKU

@@ -566,6 +566,10 @@ EOF
 
 echo '**********************'
 
+kubectl create ns monitoring
+kubectl apply -f ../utility/metricsMonitor/windows-exporter-ds.yaml
+kubectl apply -f ../utility/metricsMonitor/ama-metrics-settings-cm.yaml
+
 sbConnectionString=$(az servicebus namespace authorization-rule keys list -g $aksResourceGroupName --namespace-name $servicebusNamespaceName --name RootManageSharedAccessKey --query "primaryConnectionString" -o tsv)
 
 echo 'Service bus connection string: ' $sbConnectionString

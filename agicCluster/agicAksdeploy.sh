@@ -469,8 +469,8 @@ fi
 
 sleep 10
 kubectl create ns monitoring
-kubectl apply -f ../metricsMonitor/windows-exporter-ds.yaml
-kubectl apply -f ../metricsMonitor/ama-metrics-settings-cm.yaml
+kubectl apply -f ../utility/metricsMonitor/windows-exporter-ds.yaml
+kubectl apply -f ../utility/metricsMonitor/ama-metrics-settings-cm.yaml
 
 kubectl apply -f https://raw.githubusercontent.com/Azure/application-gateway-kubernetes-ingress/master/docs/examples/aspnetapp.yaml
 
@@ -478,7 +478,7 @@ echo '**********************'
 sleep 10
 
 ingressIp=$(kubectl get ingress aspnetapp --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
-az network nsg rule create --resource-group $aksResourceGroupName --nsg-name "$aksPrefix-vnet-appgateway-sub-nsg" --name Allow-HTTP-All --access Allow --protocol Tcp --direction Inbound --priority 100 --source-address-prefix Internet --source-port-range "*" --destination-address-prefix $ingressIp --destination-port-range 80
+az network nsg rule create --resource-group $aksResourceGroupName --nsg-name "$aksPrefix-vnet-appgateway-sub-nsg" --name Allow-HTTP-All --access Allow --protocol Tcp --direction Inbound --priority 500 --source-address-prefix Internet --source-port-range "*" --destination-address-prefix $ingressIp --destination-port-range 80
 
 
 sleep 10

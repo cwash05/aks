@@ -185,7 +185,7 @@ resource grafanaDataReaderRole 'Microsoft.Authorization/roleAssignments@2022-04-
   scope: azureMonitorWorkspace
 }
 
-module grafanaMonitoringRederRole 'sub_perms.bicep' =  {
+module grafanaMonitoringRederRole '../utility/perms/sub_perms.bicep' =  {
   name: guid(guidGen, baseTime, azureMonitorWorkspace.id)
   params:{
     principalId: grafanaManagedDashboard.identity.principalId
@@ -298,7 +298,7 @@ resource kubeletID 'Microsoft.ManagedIdentity/userAssignedIdentities@2022-01-31-
 }
 
 
-module subContributorRole 'sub_perms.bicep' = if (assignments) {
+module subContributorRole '../utility/perms/sub_perms.bicep' = if (assignments) {
   name: guid(guidGen, 'addContributorRole')
   params:{
     principalId: kubeletID.properties.principalId
@@ -326,7 +326,7 @@ resource ccpNetAdminRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = 
 }
 
 
-module apiSubNsg 'vnetnsg.bicep' = {
+module apiSubNsg '../utility/network/vnetnsg.bicep' = {
   name: '${vnet_name}-${api_sub_name}-nsg'
   params:{
     nsgName: '${vnet_name}-${api_sub_name}-nsg'
@@ -334,42 +334,42 @@ module apiSubNsg 'vnetnsg.bicep' = {
   }
 }
 
-module linuxNodeSubNsg 'vnetnsg.bicep' = {
+module linuxNodeSubNsg '../utility/network/vnetnsg.bicep' = {
   name: '${vnet_name}-${linux_z1_sub_name}-nsg'
   params:{
     nsgName: '${vnet_name}-${linux_z1_sub_name}-nsg'
     rglocation: location
   }
 }
-module linuxPodSubNsg 'vnetnsg.bicep' = {
+module linuxPodSubNsg '../utility/network/vnetnsg.bicep' = {
   name: '${vnet_name}-${linux_z1_pod_sub_name}-nsg'
   params:{
     nsgName: '${vnet_name}-${linux_z1_pod_sub_name}-nsg'
     rglocation: location
   }
 }
-module winNodeSubNsg 'vnetnsg.bicep' = {
+module winNodeSubNsg '../utility/network/vnetnsg.bicep' = {
   name: '${vnet_name}-${win_z1_sub_name}-nsg'
   params:{
     nsgName: '${vnet_name}-${win_z1_sub_name}-nsg'
     rglocation: location
   }
 }
-module winPodSubNsg 'vnetnsg.bicep' = {
+module winPodSubNsg '../utility/network/vnetnsg.bicep' = {
   name: '${vnet_name}-${win_z1_pod_sub_name}-nsg'
   params:{
     nsgName: '${vnet_name}-${win_z1_pod_sub_name}-nsg'
     rglocation: location
   }
 }
-module sysNodeSubNsg 'vnetnsg.bicep' = {
+module sysNodeSubNsg '../utility/network/vnetnsg.bicep' = {
   name: '${vnet_name}-${sysnode_sub_name}-nsg'
   params:{
     nsgName: '${vnet_name}-${sysnode_sub_name}-nsg'
     rglocation: location
   }
 }
-module sysPodSubNsg 'vnetnsg.bicep' = {
+module sysPodSubNsg '../utility/network/vnetnsg.bicep' = {
   name: '${vnet_name}-${sysnode_pod_sub_name}-nsg'
   params:{
     nsgName: '${vnet_name}-${sysnode_pod_sub_name}-nsg'
@@ -721,7 +721,7 @@ resource win_node_pool 'Microsoft.ContainerService/managedClusters/agentPools@20
 }
 
 
-module managedProGraf '../metricsMonitor/FullAzureMonitorMetricsProfile.bicep' = {
+module managedProGraf '../utility/metricsMonitor/FullAzureMonitorMetricsProfile.bicep' = {
   name: 'monitor-${cluster_name}'
   params:{
     azureMonitorWorkspaceLocation: azureMonitorLocation

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Template
-template="baseCluster.bicep"
+template="appRouteCluster.bicep"
 # graftemplate="FullAzureMonitorMetricsProfile.bicep"
 #parameters="main.parameters.json"
 
@@ -95,6 +95,7 @@ userAssnFedIdName="${aksPrefix}WorkloadId"
 fedCredentialIdName="${aksPrefix}FedId"  
 serviceAccountName="${aksPrefix,,}-sa" 
 serviceAccountNamespace="${aksPrefix,,}-ns" 
+dnsZoneName="${aksPrefix,,}.com" 
 
 # AKS cluster name
 aksName="${aksPrefix}-aks"
@@ -401,12 +402,9 @@ echo 'Retreiving the OIDC URL'
 AKS_OIDC_ISSUER="$(az aks show -n $aksName -g $aksResourceGroupName --query "oidcIssuerProfile.issuerUrl" -otsv)"
 echo $AKS_OIDC_ISSUER
 
-
 keyVaultName=$(az deployment group show  -g $aksResourceGroupName -n ${template/.bicep} --query properties.outputs.keyVaultName.value -otsv)
 kvSecretName=$(az deployment group show  -g $aksResourceGroupName -n ${template/.bicep} --query properties.outputs.kvSecretName.value -otsv)
 keyVaultUri=$(az deployment group show  -g $aksResourceGroupName -n ${template/.bicep} --query properties.outputs.keyVaultUri.value -otsv)
-
-
 
 grafanaDashboardUrl=$(az deployment group show  -g $aksResourceGroupName -n ${template/.bicep}  --query properties.outputs.grafanaDashboardUrl.value -otsv)
 
@@ -467,6 +465,64 @@ echo "Namespace [${serviceAccountNamespace}] already exist."
 fi  
 
 
+cat <<EOF | kubectl apply -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aks-helloworld  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aks-helloworld
+  template:
+    metadata:
+      labels:
+        app: aks-helloworld
+    spec:
+      containers:
+      - name: aks-helloworld
+        image: mcr.microsoft.com/azuredocs/aks-helloworld:v1
+        ports:
+        - containerPort: 80
+        env:
+        - name: TITLE
+          value: "Welcome to Azure Kubernetes Service (AKS)"
+      nodeSelector:
+        kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aks-helloworld
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+  selector:
+    app: aks-helloworld
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+  name: aks-helloworld
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: aks-helloworld
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+---
+EOF
+
+
 
 echo '**********************'
 
@@ -475,14 +531,29 @@ kubectl apply -f ../utility/metricsMonitor/windows-exporter-ds.yaml
 kubectl apply -f ../utility/metricsMonitor/ama-metrics-settings-cm.yaml
 
 # adminpw=$(az deployment group show  -g $aksResourceGroupName -n ${template/.bicep} --query properties.outputs.adminpw.value -otsv)
-
+sleep 10
+appRoutingId=$(az aks show -g $aksResourceGroupName -n $aksName --query ingressProfile.webAppRouting.identity.objectId -o tsv)
+dnsZoneId=$(az network dns zone show -g $aksResourceGroupName -n $dnsZoneName --query "id" --output tsv)
 
 sleep 15
+ingressIp=$(kubectl get ingress aks-helloworld --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+# echo App Routing Id: $appRoutingId
+# echo DNS Zone id: $dnsZoneId
+# echo Ingress Ip: $ingressIp
+
+echo "Creating role assignment"
+MSYS_NO_PATHCONV=1 az role assignment create --role "DNS Zone Contributor" --assignee $appRoutingId --scope $dnsZoneId
+echo
+echo "Creating NSG Rule"
+az network nsg rule create --resource-group $aksResourceGroupName --nsg-name "$aksPrefix-vnet-linuxz1-sub-nsg" --name Allow-HTTP-All --access Allow --protocol Tcp --direction Inbound --priority 500 --source-address-prefix Internet --source-port-range "*" --destination-address-prefix $ingressIp --destination-port-range 80
+
 
 echo "Running logs quick-start -n $serviceAccountNamespace"
 kubectl logs quick-start -n $serviceAccountNamespace
 echo
 echo 'Grafana dashboard Url:' $grafanaDashboardUrl
+echo 'Aspnet application URL: http://'$ingressIp
 echo
 echo 'Finished'
 echo '*************************'
